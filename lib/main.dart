@@ -15,6 +15,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+
+      /// [ChangeNotifierProvider]。所有的viewModel通过 Provider 实现与view 层的绑定。
+      /// Provider 是对 [InheritedWidget] 封装。因此我们才能实现调用notifyListeners() 时，通知子树重新构建
+      /// 当然你也可以一个插件也不用，自己封装[InheritedWidget]
       home: ChangeNotifierProvider(
         create: (_) => LoginViewModel(),
         child: LoginWidget(),

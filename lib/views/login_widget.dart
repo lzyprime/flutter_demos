@@ -21,6 +21,8 @@ class LoginWidget extends StatelessWidget {
           ),
           RaisedButton(
             onPressed: provider.login,
+
+            /// 根据 state 的值，按钮显示不同内容。
             child: provider.state == 0
                 ? Text("login")
                 : provider.state == 1
