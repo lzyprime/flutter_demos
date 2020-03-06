@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <p id="getValue"></p>
+    <hr />
+    <p id="inputText"></p>
+
+    <script>
+        var callbacks = {};
+        window.jsBridge = {
+            invoke: function (api, data, callback) {
+                callbacks[api] = callback;
+                nativeBridge.postMessage(JSON.stringify({
+                    api: api,
+                    data: data || {},
+                }));
+            },
+            receiveMessage: function (msg) {
+                if (callbacks[msg.api]) {
+                    callbacks[msg.api](msg); // 执行调用
+                }
+            }
+        };
+
+        window.jsBridge.invoke("getValue", {}, function (data) {
+            document.getElementById("getValue").innerHTML = JSON.stringify(data);
+        });
+
+        window.jsBridge.invoke("inputText", {}, function (data) {
+            document.getElementById("inputText").innerHTML = JSON.stringify(data);
+        });
+
+        window.jsBridge.invoke("showSnackBar", { text: "snackBar should show" }, null);
+
+        window.jsBridge.invoke("newWebView", { url: "https://lzyprime.github.io" }, null);
+
+
+    </script>
+
+</body>
+
+</html>
