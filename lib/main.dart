@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,7 +30,11 @@ class HomeWidget extends StatelessWidget {
               RaisedButton(
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => OverlayDemo1())),
                 child: Text("demo1"),
-              )
+              ),
+              RaisedButton(
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => OverlayDemo2())),
+                child: Text("demo2"),
+              ),
             ],
           ),
         ),
@@ -107,6 +112,68 @@ class _OverlayDemo1State extends State<OverlayDemo1> {
   void dispose() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    super.dispose();
+  }
+}
+
+class OverlayDemo2 extends StatefulWidget {
+  @override
+  createState() => OverlayDemo2State();
+}
+
+class OverlayDemo2State extends State<OverlayDemo2> {
+  final _layerLink = LayerLink();
+  final _buttonKey = GlobalKey();
+  OverlayEntry _overlayEntry;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      appBar: AppBar(title: Text("OverlayDemo2")),
+      body: ListView(
+        children: [
+          Container(
+            constraints: BoxConstraints.expand(height: size.height),
+            alignment: Alignment.center,
+            child: ListTile(
+              title: CompositedTransformTarget(
+                link: _layerLink,
+                child: RaisedButton(
+                  color: Colors.amberAccent,
+                  key: _buttonKey,
+                    onPressed: () {
+                  if (_overlayEntry != null) {
+                    _overlayEntry.remove();
+                    _overlayEntry = null;
+                    return;
+                  }
+                  final buttonSize = (_buttonKey.currentContext.findRenderObject() as RenderBox).size;
+
+                  Overlay.of(context).insert(_overlayEntry = OverlayEntry(
+                      builder: (context) => Positioned(child: CompositedTransformFollower(
+                        link: _layerLink,
+                        showWhenUnlinked: false,
+                        offset: Offset(0, buttonSize.height),
+                        child: Container(color: Colors.blue),
+                      ),width: buttonSize.width,
+                        height: 300,
+                      )));
+                }),
+              ),
+            ),
+          ),
+          SizedBox.fromSize(size: size),
+          SizedBox.fromSize(size: size),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _overlayEntry?.remove();
     super.dispose();
   }
 }
